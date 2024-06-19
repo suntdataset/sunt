@@ -57,9 +57,7 @@ To install requirements:
 pip install -r requirements.txt
 ```
 
-### Training
-
-#### Node Regression
+### Node Regression
 
 All code in `models/node-regression/main.py`
 
@@ -77,9 +75,7 @@ df_nodes_loader = pd.read_csv('../../data/graph_designer/train_test/df_nodes_sel
 df_nodes_loader['time'] = pd.to_datetime(df_nodes_loader['time'], format='%Y-%m-%d %H:%M:%S')
 ```
 
-
-
-**Train**:
+**Train and test**:
 
 ```python
 device = torch.device('cuda:3' if torch.cuda.is_available() else 'cpu')
@@ -95,12 +91,67 @@ model =  mm.GCN(in_channels=36,
 run_model(model, train_dataset, test_dataset, df_nodes, nodes, df_nodes_loader, mn, epcs, device=device)
 ```
 
+---
+
+### Node classification
+
+All code in `models/node-classification/main.py`
+
+**Load data**: Enter in dir `models/node-classification/` :
+
+```python
+# load train and test by fold
+data = torch.load(f'../../data/graph_designer/train_test_node_classification_days/data_{fold_idx}.pt')
+```
+
+**Train and Test**
+
+```python
+# ser parameters
+device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+input_layer  = data.num_features
+hidden_layer = 64
+out_layer    = 1#data.y.shape[1]
+mn = f'gcn{sufix}'
+epcs=100
+
+# instance a model
+model =  mm.GCN(in_channels=input_layer,
+                                  hidden_channels=hidden_layer,
+                                  out_channels=out_layer).to(device)
+# train and test
+run_model(model, data, mn, epcs, device=device)
+```
+
+---
+
+### Edge classification
 
 
+All code in `models/edge-classification/main.py`
 
+**Load data**: Enter in dir `models/edge-classification/` :
 
+```python
+# load train and test by fold
+train_dataset = torch.load(f'../../data/graph_designer/train_test_edge_classification_days/train_data_{fold_idx}.pt')
+        test_dataset  = torch.load(f'../../data/graph_designer/train_test_edge_classification_days/test_data_{fold_idx}.pt')
+```
 
+**Train and Test**
 
-#### Node classification
-
-#### Edge classification
+```python
+device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+input_layer  = train_dataset.num_features
+hidden_layer = 64
+out_layer    = train_dataset.edge_label.shape[1]
+mn = f'gcn{sufix}'
+epcs=50
+    
+# instance a model
+model =  mm.GCNEdgeClassifier(in_channels=input_layer,
+                                  hidden_channels=hidden_layer,
+                                  out_channels=out_layer).to(device)
+# traind and test
+run_model(model, train_dataset, test_dataset, mn, epcs, device=device)
+```
