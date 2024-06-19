@@ -18,8 +18,8 @@ This fold presents examples of models that can be used to explore our dataset. S
 
 ### All examples have common Python modules:
 
-├── `data.py` : Module to load and pre-process data.
-├── `main.py`: Performs the model training and validation pipeline.
-├── `models.py`: It has the architecture of the models.
-├── `val.py`: Has validation functions.
-└── `workflow.py`: Present the functions for training and testing models.
+- `data.py` : Module to load and pre-process data.
+- `main.py`: Performs the model training and validation pipeline.
+- `models.py`: It has the architecture of the models.
+-  `val.py`: Has validation functions.
+- `workflow.py`: Present the functions for training and testing models.
